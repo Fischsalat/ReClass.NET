@@ -55,6 +55,7 @@ namespace ReClassNET.Util
 				var colors = root?.Element(XmlColorsElement);
 				if (colors != null)
 				{
+					XElementSerializer.TryRead(colors, nameof(settings.ControlsBackgroundColor), e => settings.ControlsBackgroundColor = XElementSerializer.ToColor(e));
 					XElementSerializer.TryRead(colors, nameof(settings.BackgroundColor), e => settings.BackgroundColor = XElementSerializer.ToColor(e));
 					XElementSerializer.TryRead(colors, nameof(settings.SelectedColor), e => settings.SelectedColor = XElementSerializer.ToColor(e));
 					XElementSerializer.TryRead(colors, nameof(settings.HiddenColor), e => settings.HiddenColor = XElementSerializer.ToColor(e));
@@ -125,6 +126,7 @@ namespace ReClassNET.Util
 					),
 					new XElement(
 						XmlColorsElement,
+						XElementSerializer.ToXml(nameof(settings.ControlsBackgroundColor), settings.ControlsBackgroundColor),
 						XElementSerializer.ToXml(nameof(settings.BackgroundColor), settings.BackgroundColor),
 						XElementSerializer.ToXml(nameof(settings.SelectedColor), settings.SelectedColor),
 						XElementSerializer.ToXml(nameof(settings.HiddenColor), settings.HiddenColor),

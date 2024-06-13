@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Drawing;
 using System.Windows.Forms;
 using ReClassNET.Extensions;
 using ReClassNET.Nodes;
@@ -260,6 +261,7 @@ namespace ReClassNET.Controls
 
 		private void projectTreeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{
+
 			if (e.Node.Level == 0)
 			{
 				return;
@@ -533,6 +535,12 @@ namespace ReClassNET.Controls
 			projectTreeView.Sort();
 
 			projectTreeView.EndUpdate();
+		}
+
+		public void UpdateColors(Color Background, Color Foreground)
+		{
+			this.projectTreeView.BackColor = Background;
+			this.projectTreeView.ForeColor = Foreground;
 		}
 	}
 }

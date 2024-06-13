@@ -53,6 +53,8 @@ namespace ReClassNET.Forms
             this.showNodeAddressCheckBox = new System.Windows.Forms.CheckBox();
             this.stayOnTopCheckBox = new System.Windows.Forms.CheckBox();
             this.colorsSettingTabPage = new System.Windows.Forms.TabPage();
+            this.backgroundLabel = new System.Windows.Forms.Label();
+            this.backgroundColorBox = new ReClassNET.Controls.ColorBox();
             this.nodeColorGroupBox = new System.Windows.Forms.GroupBox();
             this.nodeValueLabel = new System.Windows.Forms.Label();
             this.nodePluginLabel = new System.Windows.Forms.Label();
@@ -80,9 +82,11 @@ namespace ReClassNET.Forms
             this.nodeTypeLabel = new System.Windows.Forms.Label();
             this.nodeNameLabel = new System.Windows.Forms.Label();
             this.nodeNameColorBox = new ReClassNET.Controls.ColorBox();
-            this.backgroundLabel = new System.Windows.Forms.Label();
-            this.backgroundColorBox = new ReClassNET.Controls.ColorBox();
+            this.controlsBackgroundLable = new System.Windows.Forms.Label();
+            this.controlsBackgroundColorBox = new ReClassNET.Controls.ColorBox();
             this.typeDefinitionsSettingsTabPage = new System.Windows.Forms.TabPage();
+            this.utf32TextSettingsLabel = new System.Windows.Forms.Label();
+            this.utf32TextTypeTextBox = new System.Windows.Forms.TextBox();
             this.nuintSettingsLabel = new System.Windows.Forms.Label();
             this.nuintTypeTextBox = new System.Windows.Forms.TextBox();
             this.nintSettingsLabel = new System.Windows.Forms.Label();
@@ -129,8 +133,6 @@ namespace ReClassNET.Forms
             this.int8SettingsLabel = new System.Windows.Forms.Label();
             this.int8TypeTextBox = new System.Windows.Forms.TextBox();
             this.bannerBox = new ReClassNET.Controls.BannerBox();
-            this.utf32TextSettingsLabel = new System.Windows.Forms.Label();
-            this.utf32TextTypeTextBox = new System.Windows.Forms.TextBox();
             this.settingsTabControl.SuspendLayout();
             this.generalSettingsTabPage.SuspendLayout();
             this.fileAssociationGroupBox.SuspendLayout();
@@ -383,9 +385,11 @@ namespace ReClassNET.Forms
             // 
             // colorsSettingTabPage
             // 
-            this.colorsSettingTabPage.Controls.Add(this.nodeColorGroupBox);
             this.colorsSettingTabPage.Controls.Add(this.backgroundLabel);
             this.colorsSettingTabPage.Controls.Add(this.backgroundColorBox);
+            this.colorsSettingTabPage.Controls.Add(this.nodeColorGroupBox);
+            this.colorsSettingTabPage.Controls.Add(this.controlsBackgroundLable);
+            this.colorsSettingTabPage.Controls.Add(this.controlsBackgroundColorBox);
             this.colorsSettingTabPage.Location = new System.Drawing.Point(4, 22);
             this.colorsSettingTabPage.Name = "colorsSettingTabPage";
             this.colorsSettingTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -393,6 +397,23 @@ namespace ReClassNET.Forms
             this.colorsSettingTabPage.TabIndex = 1;
             this.colorsSettingTabPage.Text = "Colors";
             this.colorsSettingTabPage.UseVisualStyleBackColor = true;
+            // 
+            // backgroundLabel
+            // 
+            this.backgroundLabel.AutoSize = true;
+            this.backgroundLabel.Location = new System.Drawing.Point(6, 48);
+            this.backgroundLabel.Name = "backgroundLabel";
+            this.backgroundLabel.Size = new System.Drawing.Size(161, 13);
+            this.backgroundLabel.TabIndex = 30;
+            this.backgroundLabel.Text = "Memory View Background Color:";
+            // 
+            // backgroundColorBox
+            // 
+            this.backgroundColorBox.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.backgroundColorBox.Location = new System.Drawing.Point(175, 45);
+            this.backgroundColorBox.Name = "backgroundColorBox";
+            this.backgroundColorBox.Size = new System.Drawing.Size(123, 20);
+            this.backgroundColorBox.TabIndex = 29;
             // 
             // nodeColorGroupBox
             // 
@@ -422,7 +443,7 @@ namespace ReClassNET.Forms
             this.nodeColorGroupBox.Controls.Add(this.nodeTypeLabel);
             this.nodeColorGroupBox.Controls.Add(this.nodeNameLabel);
             this.nodeColorGroupBox.Controls.Add(this.nodeNameColorBox);
-            this.nodeColorGroupBox.Location = new System.Drawing.Point(9, 43);
+            this.nodeColorGroupBox.Location = new System.Drawing.Point(9, 71);
             this.nodeColorGroupBox.Name = "nodeColorGroupBox";
             this.nodeColorGroupBox.Size = new System.Drawing.Size(539, 225);
             this.nodeColorGroupBox.TabIndex = 28;
@@ -650,22 +671,24 @@ namespace ReClassNET.Forms
             this.nodeNameColorBox.Size = new System.Drawing.Size(123, 20);
             this.nodeNameColorBox.TabIndex = 14;
             // 
-            // backgroundLabel
+            // controlsBackgroundLable
             // 
-            this.backgroundLabel.AutoSize = true;
-            this.backgroundLabel.Location = new System.Drawing.Point(6, 14);
-            this.backgroundLabel.Name = "backgroundLabel";
-            this.backgroundLabel.Size = new System.Drawing.Size(161, 13);
-            this.backgroundLabel.TabIndex = 1;
-            this.backgroundLabel.Text = "Memory View Background Color:";
+            this.controlsBackgroundLable.AutoSize = true;
+            this.controlsBackgroundLable.BackColor = System.Drawing.Color.White;
+            this.controlsBackgroundLable.Location = new System.Drawing.Point(6, 14);
+            this.controlsBackgroundLable.Name = "controlsBackgroundLable";
+            this.controlsBackgroundLable.Size = new System.Drawing.Size(136, 13);
+            this.controlsBackgroundLable.TabIndex = 1;
+            this.controlsBackgroundLable.Text = "Controls Background Color:";
             // 
-            // backgroundColorBox
+            // controlsBackgroundColorBox
             // 
-            this.backgroundColorBox.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.backgroundColorBox.Location = new System.Drawing.Point(175, 11);
-            this.backgroundColorBox.Name = "backgroundColorBox";
-            this.backgroundColorBox.Size = new System.Drawing.Size(123, 20);
-            this.backgroundColorBox.TabIndex = 0;
+            this.controlsBackgroundColorBox.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.controlsBackgroundColorBox.Location = new System.Drawing.Point(175, 11);
+            this.controlsBackgroundColorBox.Name = "controlsBackgroundColorBox";
+            this.controlsBackgroundColorBox.Size = new System.Drawing.Size(123, 20);
+            this.controlsBackgroundColorBox.TabIndex = 0;
+            this.controlsBackgroundColorBox.ColorChanged += new System.EventHandler(this.controlsBackgroundColorBox_ColorChanged);
             // 
             // typeDefinitionsSettingsTabPage
             // 
@@ -723,6 +746,22 @@ namespace ReClassNET.Forms
             this.typeDefinitionsSettingsTabPage.TabIndex = 2;
             this.typeDefinitionsSettingsTabPage.Text = "Type Definitions";
             this.typeDefinitionsSettingsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // utf32TextSettingsLabel
+            // 
+            this.utf32TextSettingsLabel.AutoSize = true;
+            this.utf32TextSettingsLabel.Location = new System.Drawing.Point(254, 233);
+            this.utf32TextSettingsLabel.Name = "utf32TextSettingsLabel";
+            this.utf32TextSettingsLabel.Size = new System.Drawing.Size(43, 13);
+            this.utf32TextSettingsLabel.TabIndex = 52;
+            this.utf32TextSettingsLabel.Text = "UTF32:";
+            // 
+            // utf32TextTypeTextBox
+            // 
+            this.utf32TextTypeTextBox.Location = new System.Drawing.Point(346, 230);
+            this.utf32TextTypeTextBox.Name = "utf32TextTypeTextBox";
+            this.utf32TextTypeTextBox.Size = new System.Drawing.Size(120, 20);
+            this.utf32TextTypeTextBox.TabIndex = 51;
             // 
             // nuintSettingsLabel
             // 
@@ -1096,22 +1135,6 @@ namespace ReClassNET.Forms
             this.bannerBox.Text = "Configure the global settings.";
             this.bannerBox.Title = "Settings";
             // 
-            // utf32TextSettingsLabel
-            // 
-            this.utf32TextSettingsLabel.AutoSize = true;
-            this.utf32TextSettingsLabel.Location = new System.Drawing.Point(254, 233);
-            this.utf32TextSettingsLabel.Name = "utf32TextSettingsLabel";
-            this.utf32TextSettingsLabel.Size = new System.Drawing.Size(43, 13);
-            this.utf32TextSettingsLabel.TabIndex = 52;
-            this.utf32TextSettingsLabel.Text = "UTF32:";
-            // 
-            // utf32TextTypeTextBox
-            // 
-            this.utf32TextTypeTextBox.Location = new System.Drawing.Point(346, 230);
-            this.utf32TextTypeTextBox.Name = "utf32TextTypeTextBox";
-            this.utf32TextTypeTextBox.Size = new System.Drawing.Size(120, 20);
-            this.utf32TextTypeTextBox.TabIndex = 51;
-            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1164,7 +1187,7 @@ namespace ReClassNET.Forms
 		private System.Windows.Forms.CheckBox showPluginInfoCheckBox;
 		private System.Windows.Forms.CheckBox showStringCheckBox;
 		private System.Windows.Forms.CheckBox showSymbolsCheckBox;
-		private ColorBox backgroundColorBox;
+		private ColorBox controlsBackgroundColorBox;
 		private System.Windows.Forms.Label nodeSelectedLabel;
 		private ColorBox nodeSelectedColorBox;
 		private System.Windows.Forms.Label nodeHiddenLabel;
@@ -1175,7 +1198,7 @@ namespace ReClassNET.Forms
 		private ColorBox nodeOffsetColorBox;
 		private System.Windows.Forms.Label nodeHexValueLabel;
 		private ColorBox nodeHexValueColorBox;
-		private System.Windows.Forms.Label backgroundLabel;
+		private System.Windows.Forms.Label controlsBackgroundLable;
 		private System.Windows.Forms.Label nodeValueLabel;
 		private ColorBox nodeValueColorBox;
 		private System.Windows.Forms.Label nodeNameLabel;
@@ -1247,5 +1270,7 @@ namespace ReClassNET.Forms
 		private System.Windows.Forms.TextBox nintTypeTextBox;
 		private System.Windows.Forms.Label utf32TextSettingsLabel;
 		private System.Windows.Forms.TextBox utf32TextTypeTextBox;
+		private System.Windows.Forms.Label backgroundLabel;
+		private ColorBox backgroundColorBox;
 	}
 }

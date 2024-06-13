@@ -19,6 +19,7 @@ using ReClassNET.MemoryScanner.Comparer;
 using ReClassNET.Nodes;
 using ReClassNET.Plugins;
 using ReClassNET.Project;
+using ReClassNET.Properties;
 using ReClassNET.UI;
 using ReClassNET.Util;
 using ReClassNET.Util.Conversion;
@@ -77,6 +78,8 @@ namespace ReClassNET.Forms
 			InitializeComponent();
 			UpdateWindowTitle();
 
+			//SetBinding(Settings.controlsBackgroundColorBox, nameof(ColorBox.Color), settings, nameof(Settings.ControlsBackgroundColor));
+
 			mainMenuStrip.Renderer = new CustomToolStripProfessionalRenderer(true, true);
 			toolStrip.Renderer = new CustomToolStripProfessionalRenderer(true, false);
 			isLittleEndianToolStripMenuItem.Checked = BitConverter.IsLittleEndian;
@@ -97,11 +100,33 @@ namespace ReClassNET.Forms
 			pluginManager = new PluginManager(new DefaultPluginHost(this, Program.RemoteProcess, Program.Logger));
 		}
 
+		private static void SetBackgroundControlsColor()
+		{
+			if (Application.OpenForms == null || Application.OpenForms.Count <= 0 || Application.OpenForms[0] == null)
+				return;
+
+			MainForm F = (MainForm)Application.OpenForms[0];
+
+			var Background = Program.Settings.ControlsBackgroundColor;
+			var Foreground = Program.Settings.ControlsBackgroundColor;
+
+			F.UpdateColors(Background, Foreground);
+			F.projectView.UpdateColors(Background, Foreground);
+
+			int i = 0;
+			foreach (Control form2 in Application.OpenForms[0].Controls)
+			{
+				form2.BackColor = Background;
+			}
+		}
+
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 
 			GlobalWindowManager.AddWindow(this);
+
+			SetBackgroundControlsColor();
 
 			pluginManager.LoadAllPlugins(Path.Combine(Application.StartupPath, Constants.PluginsFolder), Program.Logger);
 

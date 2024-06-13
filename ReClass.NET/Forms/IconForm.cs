@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace ReClassNET.Forms
 {
@@ -7,6 +8,12 @@ namespace ReClassNET.Forms
 		public IconForm()
 		{
 			Icon = Properties.Resources.ReClassNet;
+		}
+
+		public void UpdateColors(Color Background, Color Foreground)
+		{
+			this.BackColor = Background;
+			this.ForeColor = Foreground;
 		}
 	}
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Windows.Forms;
 using ReClassNET.Controls;
 using ReClassNET.Extensions;
@@ -110,6 +111,8 @@ namespace ReClassNET.Forms
 
 		private void SetColorBindings()
 		{
+			SetBinding(controlsBackgroundColorBox, nameof(ColorBox.Color), settings, nameof(Settings.ControlsBackgroundColor));
+
 			SetBinding(backgroundColorBox, nameof(ColorBox.Color), settings, nameof(Settings.BackgroundColor));
 
 			SetBinding(nodeSelectedColorBox, nameof(ColorBox.Color), settings, nameof(Settings.SelectedColor));
@@ -152,6 +155,38 @@ namespace ReClassNET.Forms
 			SetBinding(utf16TextTypeTextBox, nameof(TextBox.Text), typeMapping, nameof(CppTypeMapping.TypeUtf16Text));
 			SetBinding(utf32TextTypeTextBox, nameof(TextBox.Text), typeMapping, nameof(CppTypeMapping.TypeUtf32Text));
 			SetBinding(functionPtrTypeTextBox, nameof(TextBox.Text), typeMapping, nameof(CppTypeMapping.TypeFunctionPtr));
+		}
+
+		public System.Collections.Generic.IEnumerable<System.ComponentModel.Component> GetComponents(Control c)
+		{
+			System.Reflection.FieldInfo fi = c.GetType().GetField("components", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+			if (fi?.GetValue(c) is System.ComponentModel.IContainer container)
+			{
+				return container.Components.OfType<System.ComponentModel.Component>();
+			}
+			else
+			{
+				return Enumerable.Empty<System.ComponentModel.Component>();
+			}
+		}
+
+		private void controlsBackgroundColorBox_ColorChanged(object sender, EventArgs e)
+		{
+			if (Application.OpenForms[0] == null)
+				return;
+		
+			MainForm F = (MainForm)Application.OpenForms[0];
+		
+			var Background = controlsBackgroundColorBox.Color;
+			var Foreground = controlsBackgroundColorBox.Color;
+		
+			F.UpdateColors(Background, Foreground);
+			F.projectView.UpdateColors(Background, Foreground);
+		
+			foreach (Control form2 in Application.OpenForms[0].Controls)
+			{
+				form2.BackColor = Background;
+			}		
 		}
 	}
 }

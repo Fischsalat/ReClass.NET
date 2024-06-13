@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Text;
 using ReClassNET.Util;
 
@@ -44,9 +44,10 @@ namespace ReClassNET
 
 		public bool ShowCommentPluginInfo { get; set; } = true;
 
-		// Colors
+        // Colors
+        public Color ControlsBackgroundColor { get; set; } = Color.FromArgb(255, 255, 255);
 
-		public Color BackgroundColor { get; set; } = Color.FromArgb(255, 255, 255);
+        public Color BackgroundColor { get; set; } = Color.FromArgb(255, 255, 255);
 
 		public Color SelectedColor { get; set; } = Color.FromArgb(240, 240, 240);
 
