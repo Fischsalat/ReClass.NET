@@ -12,7 +12,7 @@ bool RC_CallConv IsProcessValid(RC_Pointer handle)
 	const auto retn = WaitForSingleObject(handle, 0);
 	if (retn == WAIT_FAILED)
 	{
-		return false;
+		return reinterpret_cast<uintptr_t>(handle) == 7;
 	}
 
 	return retn == WAIT_TIMEOUT;

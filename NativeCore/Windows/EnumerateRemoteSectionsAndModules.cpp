@@ -6,107 +6,36 @@
 #include <functional>
 
 #include "NativeCore.hpp"
+#include "CommandParameters.hpp"
+#include "Communication.hpp"
 
 PPEB GetRemotePeb(const HANDLE process)
 {
-	static auto* const ntdll = GetModuleHandle(TEXT("ntdll"));
-	if (!ntdll)
-	{
-		return nullptr;
-	}
+	GetRemotePEB_Params* Params = static_cast<GetRemotePEB_Params*>(GetSharedMemoryParamSpace());
 
-	using tNtQueryInformationProcess = NTSTATUS (NTAPI*)(_In_ HANDLE ProcessHandle, _In_ PROCESSINFOCLASS ProcessInformationClass, _Out_writes_bytes_(ProcessInformationLength) PVOID ProcessInformation, _In_ ULONG ProcessInformationLength, _Out_opt_ PULONG ReturnLength);
+	SendCommandInSharedMemory(ECommandType::GetRemotePEB);
 
-	static const auto pNtQueryInformationProcess = tNtQueryInformationProcess(GetProcAddress(ntdll, "NtQueryInformationProcess"));
-	if (!pNtQueryInformationProcess)
-	{
-		return nullptr;
-	}
-
-	PROCESS_BASIC_INFORMATION pbi;
-	if (!NT_SUCCESS(pNtQueryInformationProcess(process, ProcessBasicInformation, &pbi, sizeof(PROCESS_BASIC_INFORMATION), nullptr)))
-	{
-		return nullptr;
-	}
-
-	return pbi.PebBaseAddress;
+	return reinterpret_cast<PPEB>(Params->OutPEB);
 }
 
 using InternalEnumerateRemoteModulesCallback = std::function<void(EnumerateRemoteModuleData&)>;
 
 bool EnumerateRemoteModulesNative(const RC_Pointer process, const InternalEnumerateRemoteModulesCallback& callback)
 {
-	auto* const ppeb = GetRemotePeb(process);
-	if (ppeb == nullptr)
+	GetRemoteModules_Params* Params = static_cast<GetRemoteModules_Params*>(GetSharedMemoryParamSpace());
+
+	SendCommandInSharedMemory(ECommandType::GetRemoteModules);
+
+	for (int i = 0; i < Params->OutNumModules; i++)
 	{
-		return false;
-	}
-	
-	PPEB_LDR_DATA ldr;
-	if (!ReadRemoteMemory(process, &ppeb->Ldr, &ldr, 0, sizeof(PPEB_LDR_DATA)))
-	{
-		return false;
+		callback(Params->OutModuleInfoBuffer[i]);
 	}
 
-	auto* const head = &ldr->InMemoryOrderModuleList;
-	PLIST_ENTRY current;
-	if (!ReadRemoteMemory(process, &head->Flink, &current, 0, sizeof(PLIST_ENTRY)))
-	{
-		return false;
-	}
-	
-	while (current != head)
-	{
-		LDR_DATA_TABLE_ENTRY entry;
-		if (!ReadRemoteMemory(process, CONTAINING_RECORD(current, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks), &entry, 0, sizeof(entry)))
-		{
-			break;
-		}
-
-		EnumerateRemoteModuleData data = {};
-		data.BaseAddress = entry.DllBase;
-		data.Size = *reinterpret_cast<ULONG*>(&entry.Reserved3[1]); // instead of undocced member could read ImageSize from headers
-
-		const auto length = std::min<int>(sizeof(RC_UnicodeChar) * (PATH_MAXIMUM_LENGTH - 1), entry.FullDllName.Length);
-		if (!ReadRemoteMemory(process, entry.FullDllName.Buffer, data.Path, 0, length))
-		{
-			break;
-		}
-		data.Path[length / 2] = 0;
-		
-		callback(data);
-		
-		current = entry.InMemoryOrderLinks.Flink;
-	}
-	
-	return true;
+	return Params->OutNumModules != 0;
 }
 
 bool EnumerateRemoteModulesWinapi(const RC_Pointer process, const InternalEnumerateRemoteModulesCallback& callback)
 {
-	auto* const handle = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, GetProcessId(process));
-	if (handle == INVALID_HANDLE_VALUE)
-	{
-		return false;
-	}
-	
-	MODULEENTRY32W me32 = {};
-	me32.dwSize = sizeof(MODULEENTRY32W);
-	if (Module32FirstW(handle, &me32))
-	{
-		do
-		{
-			EnumerateRemoteModuleData data = {};
-			data.BaseAddress = me32.modBaseAddr;
-			data.Size = me32.modBaseSize;
-			std::memcpy(data.Path, me32.szExePath, std::min(MAX_PATH, PATH_MAXIMUM_LENGTH));
-
-			callback(data);
-		} while (Module32NextW(handle, &me32));
-	}
-
-	CloseHandle(handle);
-
 	return true;
 }
 
@@ -117,47 +46,16 @@ void RC_CallConv EnumerateRemoteSectionsAndModules(RC_Pointer process, Enumerate
 		return;
 	}
 
+	GetRemoteSections_Params* Params = static_cast<GetRemoteSections_Params*>(GetSharedMemoryParamSpace());
+	
+	SendCommandInSharedMemory(ECommandType::GetRemotePEB);
+
+
 	std::vector<EnumerateRemoteSectionData> sections;
 
-	MEMORY_BASIC_INFORMATION memory = { };
-	memory.RegionSize = 0x1000;
-	size_t address = 0;
-	while (VirtualQueryEx(process, reinterpret_cast<LPCVOID>(address), &memory, sizeof(MEMORY_BASIC_INFORMATION)) != 0 && address + memory.RegionSize > address)
+	for (int i = 0; i < Params->OutNumSections; i++)
 	{
-		if (memory.State == MEM_COMMIT)
-		{
-			EnumerateRemoteSectionData section = {};
-			section.BaseAddress = memory.BaseAddress;
-			section.Size = memory.RegionSize;
-			
-			section.Protection = SectionProtection::NoAccess;
-			if ((memory.Protect & PAGE_EXECUTE) == PAGE_EXECUTE) section.Protection |= SectionProtection::Execute;
-			if ((memory.Protect & PAGE_EXECUTE_READ) == PAGE_EXECUTE_READ) section.Protection |= SectionProtection::Execute | SectionProtection::Read;
-			if ((memory.Protect & PAGE_EXECUTE_READWRITE) == PAGE_EXECUTE_READWRITE) section.Protection |= SectionProtection::Execute | SectionProtection::Read | SectionProtection::Write;
-			if ((memory.Protect & PAGE_EXECUTE_WRITECOPY) == PAGE_EXECUTE_WRITECOPY) section.Protection |= SectionProtection::Execute | SectionProtection::Read | SectionProtection::CopyOnWrite;
-			if ((memory.Protect & PAGE_READONLY) == PAGE_READONLY) section.Protection |= SectionProtection::Read;
-			if ((memory.Protect & PAGE_READWRITE) == PAGE_READWRITE) section.Protection |= SectionProtection::Read | SectionProtection::Write;
-			if ((memory.Protect & PAGE_WRITECOPY) == PAGE_WRITECOPY) section.Protection |= SectionProtection::Read | SectionProtection::CopyOnWrite;
-			if ((memory.Protect & PAGE_GUARD) == PAGE_GUARD) section.Protection |= SectionProtection::Guard;
-			
-			switch (memory.Type)
-			{
-			case MEM_IMAGE:
-				section.Type = SectionType::Image;
-				break;
-			case MEM_MAPPED:
-				section.Type = SectionType::Mapped;
-				break;
-			case MEM_PRIVATE:
-				section.Type = SectionType::Private;
-				break;
-			}
-
-			section.Category = section.Type == SectionType::Private ? SectionCategory::HEAP : SectionCategory::Unknown;
-
-			sections.push_back(section);
-		}
-		address = reinterpret_cast<size_t>(memory.BaseAddress) + memory.RegionSize;
+		sections.push_back(Params->OutSectionInfoBuffer[i]);
 	}
 
 	const auto moduleEnumerator = [&](EnumerateRemoteModuleData& data)

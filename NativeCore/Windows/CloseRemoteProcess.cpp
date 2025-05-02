@@ -4,7 +4,7 @@
 
 void RC_CallConv CloseRemoteProcess(RC_Pointer handle)
 {
-	if (handle == nullptr)
+	if (handle == nullptr || reinterpret_cast<uintptr_t>(handle) == 7)
 	{
 		return;
 	}

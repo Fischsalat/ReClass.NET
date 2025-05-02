@@ -121,5 +121,7 @@
     <ClInclude Include="..\Dependencies\distorm\src\x86defs.h">
       <Filter>Dependencies\distorm</Filter>
     </ClInclude>
+    <ClInclude Include="CommandParameters.hpp" />
+    <ClInclude Include="Communication.hpp" />
   </ItemGroup>
 </Project>
