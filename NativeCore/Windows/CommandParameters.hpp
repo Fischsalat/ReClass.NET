@@ -2,13 +2,10 @@
 
 #include "NativeCore.hpp"
 
-constexpr auto MaxNumSectionsInBuffer = 0x180;
-constexpr auto MaxNumModulesInBuffer = 0x20;
+#include "Constants.hpp"
 
-constexpr auto MaxNumBytesToRead = 0x10000;
-constexpr auto MaxNumBytesToWrite = 0x10000;
 
-enum class ECommandType
+enum class ECommandType : uint8_t
 {
 	InvalidCommand,
 
@@ -51,8 +48,9 @@ inline std::string StringifyCommandType(ECommandType Type)
 struct ParamHeader
 {
 	ECommandType Type;
-	uint8_t Pad[0xF];
+	uint8_t Pad[0x10 - sizeof(ECommandType)];
 };
+static_assert(sizeof(ParamHeader) == 0x10);
 
 
 struct GetRemotePEB_Params

@@ -45,6 +45,7 @@ void GetRemoteSections(GetRemoteSections_Params* Params)
 	MEMORY_BASIC_INFORMATION memory = { };
 	memory.RegionSize = 0x1000;
 	size_t address = 0;
+	
 	while (VirtualQuery(reinterpret_cast<LPCVOID>(address), &memory, sizeof(MEMORY_BASIC_INFORMATION)) != 0 && address + memory.RegionSize > address)
 	{
 		if (memory.State != MEM_COMMIT)
@@ -54,13 +55,12 @@ void GetRemoteSections(GetRemoteSections_Params* Params)
 		}
 
 		// We can't fit any more sections into the buffer
-		//if (Params->OutNumSections >= MaxNumSectionsInBuffer)
-		//{
-		//	break;
-		//}
+		if (Params->OutNumSections >= MaxNumSectionsInBuffer)
+		{
+			break;
+		}
 
-		//RemoteSectionData& section = Params->OutSectionInfoBuffer[Params->OutNumSections];
-		RemoteSectionData section;
+		RemoteSectionData& section = Params->OutSectionInfoBuffer[Params->OutNumSections];
 		Params->OutNumSections++;
 
 		section.BaseAddress = memory.BaseAddress;
@@ -94,8 +94,8 @@ void GetRemoteSections(GetRemoteSections_Params* Params)
 		address = reinterpret_cast<size_t>(memory.BaseAddress) + memory.RegionSize;
 	}
 
-	printf("OutNumSections: 0x%llX\n", Params->OutNumSections);
 	Params->OutNumSections = 0;
+	printf("OutNumSections: 0x % llX\n", Params->OutNumSections);
 }
 
 void ControlRemoteProcess(ControlRemoteProcess_Params* Params)
@@ -105,14 +105,28 @@ void ControlRemoteProcess(ControlRemoteProcess_Params* Params)
 
 void ReadRemoteMemory(ReadRemoteMemory_Params* Params)
 {
+	printf("&Params: %p\n", Params);
+	printf("&Params->InVirtualAddress: %p\n", &Params->InVirtualAddress);
 	Params->OutNumBytesRead = 0;
+
+	printf("VirtualAddress: %p, Size: 0x%llX\n", Params->InVirtualAddress, Params->InNumBytesToRead);
 
 	if (Params->InNumBytesToRead > MaxNumBytesToRead)
 		return;
 
+	printf("Params->InNumBytesToRead > MaxNumBytesToRead\n");
+
+
 	// Validate that the being and end addresses are in the process range
 	if (IsBadReadPtr(Params->InVirtualAddress) || IsBadReadPtr(reinterpret_cast<uintptr_t>(Params->InVirtualAddress) + Params->InNumBytesToRead))
+	{
+
+		printf("StartValid: (%d)\n", IsBadReadPtr(Params->InVirtualAddress));
+		printf("EndValid: (%d)\n", IsBadReadPtr(reinterpret_cast<uintptr_t>(Params->InVirtualAddress) + Params->InNumBytesToRead));
+
+
 		return;
+	}
 
 	memcpy(Params->OutBuffer, Params->InVirtualAddress, Params->InNumBytesToRead);
 	Params->OutNumBytesRead = Params->InNumBytesToRead;

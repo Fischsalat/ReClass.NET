@@ -35,8 +35,7 @@ void ProcessCommand()
 {
 	const ParamHeader Header = *reinterpret_cast<ParamHeader*>(SharedMemoryAddress);
 
-	uintptr_t ParamLocationInSharedMem = reinterpret_cast<uintptr_t>(SharedMemoryAddress) + 0x10;
-
+	uintptr_t ParamLocationInSharedMem = reinterpret_cast<uintptr_t>(SharedMemoryAddress) + sizeof(ParamHeader);
 
 	switch (Header.Type)
 	{

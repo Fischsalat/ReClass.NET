@@ -123,5 +123,6 @@
     </ClInclude>
     <ClInclude Include="CommandParameters.hpp" />
     <ClInclude Include="Communication.hpp" />
+    <ClInclude Include="Constants.hpp" />
   </ItemGroup>
 </Project>

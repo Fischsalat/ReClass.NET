@@ -2,13 +2,9 @@
 
 #include "ReclassTypes.hpp"
 
-constexpr auto MaxNumSectionsInBuffer = 0x180;
-constexpr auto MaxNumModulesInBuffer = 0x20;
+#include "Constants.hpp"
 
-constexpr auto MaxNumBytesToRead = 0x10000;
-constexpr auto MaxNumBytesToWrite = 0x10000;
-
-enum class ECommandType
+enum class ECommandType : uint8_t
 {
 	InvalidCommand,
 
@@ -26,35 +22,36 @@ enum class ECommandType
 struct ParamHeader
 {
 	ECommandType Type;
-	uint8_t Pad[0xF];
+	uint8_t Pad[0x10 - sizeof(ECommandType)];
 };
+static_assert(sizeof(ParamHeader) == 0x10);
 
 
-struct GetRemotePEB_Params : public ParamHeader
+struct GetRemotePEB_Params
 {
 	RC_Pointer OutPEB;
 };
 
-struct GetRemoteModules_Params : public ParamHeader
+struct GetRemoteModules_Params
 {
 	RC_Size OutNumModules;
 	RemoteModuleData OutModuleInfoBuffer[MaxNumModulesInBuffer];
 };
 
-struct GetRemoteSections_Params : public ParamHeader
+struct GetRemoteSections_Params
 {
 	RC_Size OutNumSections;
 	RemoteSectionData OutSectionInfoBuffer[MaxNumSectionsInBuffer];
 };
 
-struct ControlRemoteProcess_Params : public ParamHeader
+struct ControlRemoteProcess_Params
 {
 	ControlRemoteProcessAction InRemoteAction;
 
 	bool OutWasSuccessfull;
 };
 
-struct ReadRemoteMemory_Params : public ParamHeader
+struct ReadRemoteMemory_Params
 {
 	RC_Pointer InVirtualAddress;
 	RC_Size InNumBytesToRead;
@@ -63,7 +60,7 @@ struct ReadRemoteMemory_Params : public ParamHeader
 	uint8_t OutBuffer[0x1];
 };
 
-struct WriteRemoteMemory_Params : public ParamHeader
+struct WriteRemoteMemory_Params
 {
 	RC_Size OutNumBytesWritten;
 
@@ -72,7 +69,7 @@ struct WriteRemoteMemory_Params : public ParamHeader
 	uint8_t InBuffer[0x1]; 
 };
 
-struct GetCurrentProcessInfo_Params : public ParamHeader
+struct GetCurrentProcessInfo_Params
 {
 	EnumerateProcessData OutCurrentProcessData;
 };

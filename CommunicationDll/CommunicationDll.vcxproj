@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="Commands.hpp" />
     <ClInclude Include="Communication.hpp" />
+    <ClInclude Include="Constants.hpp" />
     <ClInclude Include="ReclassTypes.hpp" />
     <ClInclude Include="CommandParameters.hpp" />
     <ClInclude Include="Utils.h" />

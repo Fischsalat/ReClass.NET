@@ -2,20 +2,17 @@
 #include <Windows.h>
 #include <iostream>
 
-// Intermeidate buffer for command-parameters
-constexpr auto SharedMemoryName = "Local\\ReclassCommSharedMem";
-constexpr auto SharedMemorySize = 0x10000;
+#include "Constants.hpp"
 
+// Intermeidate buffer for command-parameters
 inline HANDLE SharedMemoryHandle = nullptr;
+
 inline void* SharedMemoryAddress = nullptr;
 
-
 // Triggered by reclass to signal the availability of a new command that needs to be processed
-constexpr auto NewCommandAvailableEventName = "Local\\SigReclassCmdAvailable";
 inline HANDLE CommandAvailableEvent = nullptr;
 
 // Triggered by the dll to signal that the command was processed
-constexpr auto CommandProcessingFinishedEventName = "Local\\SigReclassCmdFinished";
 inline HANDLE CommandFinishedEvent = nullptr;
 
 

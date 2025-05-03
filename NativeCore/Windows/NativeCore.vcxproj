@@ -211,6 +211,7 @@
     <ClInclude Include="..\Shared\Keys.hpp" />
     <ClInclude Include="CommandParameters.hpp" />
     <ClInclude Include="Communication.hpp" />
+    <ClInclude Include="Constants.hpp" />
     <ClInclude Include="NativeCore.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
