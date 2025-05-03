@@ -4,6 +4,8 @@
 #include <filesystem>
 
 #include "NativeCore.hpp"
+#include "CommandParameters.hpp"
+#include "Communication.hpp"
 
 enum class Platform
 {
@@ -49,6 +51,15 @@ void RC_CallConv EnumerateProcesses(EnumerateProcessCallback callbackProcess)
 	{
 		return;
 	}
+
+	
+	GetCurrentProcessInfo_Params* Params = static_cast<GetCurrentProcessInfo_Params*>(GetSharedMemoryParamSpace());
+
+	SendCommandInSharedMemory(ECommandType::GetCurrentProcessInfo);
+
+	callbackProcess(&Params->OutCurrentProcessData);
+
+	return;
 
 	const auto handle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (handle != INVALID_HANDLE_VALUE)

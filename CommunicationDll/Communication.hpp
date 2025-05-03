@@ -20,21 +20,31 @@ inline HANDLE CommandFinishedEvent = nullptr;
 
 
 
-bool SetupSharedMemory()
+static bool SetupSharedMemory()
 {
-	// Create a named shared memory object
-	SharedMemoryHandle = CreateFileMappingA(
-		INVALID_HANDLE_VALUE,    // Use paging file
-		NULL,                    // Default security
-		PAGE_READWRITE,          // Read/write access
-		0,                       // Max size (high)
-		SharedMemorySize,        // Max size (low)
-		SharedMemoryName         // Name of mapping
+	SharedMemoryHandle = OpenFileMappingA(
+		FILE_MAP_ALL_ACCESS,  // Desired access
+		FALSE,                // Do not inherit
+		SharedMemoryName	  // Name of mapping
 	);
 
-	if (SharedMemoryHandle == nullptr) {
-		printf("CreateFileMapping failed: %lu\n", GetLastError());
-		return false;
+
+	if (SharedMemoryHandle == nullptr)
+	{
+		SharedMemoryHandle = CreateFileMappingA(
+			INVALID_HANDLE_VALUE,    // Use paging file
+			NULL,                    // Default security
+			PAGE_READWRITE,          // Read/write access
+			0,                       // Max size (high)
+			SharedMemorySize,        // Max size (low)
+			SharedMemoryName         // Name of mapping
+		);
+
+		if (SharedMemoryHandle == nullptr)
+		{
+			printf("CreateFileMapping failed: %lu\n", GetLastError());
+			return false;
+		}
 	}
 
 	// Map view of the file into the address space

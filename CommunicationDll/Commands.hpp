@@ -18,3 +18,6 @@ void ReadRemoteMemory(ReadRemoteMemory_Params* Params);
 
 // Writes memory in this process
 void WriteRemoteMemory(WriteRemoteMemory_Params* Params);
+
+// Gets process id/name/path as if it was enumerated normally
+void GetCurrentProcessInfo(GetCurrentProcessInfo_Params* Params);

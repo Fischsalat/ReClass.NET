@@ -1,6 +1,8 @@
 #include "Commands.hpp"
 #include "Utils.h"
 
+#include <Psapi.h>
+
 void GetRemotePEB(GetRemotePEB_Params* Params)
 {
 	Params->OutPEB = GetPEB();
@@ -52,12 +54,13 @@ void GetRemoteSections(GetRemoteSections_Params* Params)
 		}
 
 		// We can't fit any more sections into the buffer
-		if (Params->OutNumSections >= MaxNumSectionsInBuffer)
-		{
-			break;
-		}
+		//if (Params->OutNumSections >= MaxNumSectionsInBuffer)
+		//{
+		//	break;
+		//}
 
-		RemoteSectionData& section = Params->OutSectionInfoBuffer[Params->OutNumSections];
+		//RemoteSectionData& section = Params->OutSectionInfoBuffer[Params->OutNumSections];
+		RemoteSectionData section;
 		Params->OutNumSections++;
 
 		section.BaseAddress = memory.BaseAddress;
@@ -90,6 +93,9 @@ void GetRemoteSections(GetRemoteSections_Params* Params)
 
 		address = reinterpret_cast<size_t>(memory.BaseAddress) + memory.RegionSize;
 	}
+
+	printf("OutNumSections: 0x%llX\n", Params->OutNumSections);
+	Params->OutNumSections = 0;
 }
 
 void ControlRemoteProcess(ControlRemoteProcess_Params* Params)
@@ -125,4 +131,20 @@ void WriteRemoteMemory(WriteRemoteMemory_Params* Params)
 
 	memcpy(Params->InVirtualAddress, Params->InBuffer, Params->InNumBytesToWrite);
 	Params->OutNumBytesWritten = Params->InNumBytesToWrite;
+}
+
+void GetCurrentProcessInfo(GetCurrentProcessInfo_Params* Params)
+{
+	Params->OutCurrentProcessData.Id = GetCurrentProcessId();
+
+	wchar_t* PathAsWChar = reinterpret_cast<wchar_t*>(Params->OutCurrentProcessData.Path);
+	wchar_t* NameAsWChar = reinterpret_cast<wchar_t*>(Params->OutCurrentProcessData.Name);
+
+	HANDLE hProc = GetCurrentProcess();
+	GetModuleFileNameExW(hProc, NULL, PathAsWChar, PATH_MAXIMUM_LENGTH);
+
+	// Extract name from path
+	wchar_t* base = wcsrchr(PathAsWChar, L'\\');
+	base = base ? base + 1 : PathAsWChar;
+	wcscpy_s(NameAsWChar, PATH_MAXIMUM_LENGTH, base);
 }

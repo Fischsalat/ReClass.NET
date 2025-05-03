@@ -4,6 +4,7 @@
 
 bool RC_CallConv IsProcessValid(RC_Pointer handle)
 {
+	printf("IsProcessValid(%p);\n", handle);
 	if (handle == nullptr)
 	{
 		return false;
@@ -12,8 +13,10 @@ bool RC_CallConv IsProcessValid(RC_Pointer handle)
 	const auto retn = WaitForSingleObject(handle, 0);
 	if (retn == WAIT_FAILED)
 	{
+		printf("return (%d);\n", reinterpret_cast<uintptr_t>(handle) == 7);
 		return reinterpret_cast<uintptr_t>(handle) == 7;
 	}
 
-	return retn == WAIT_TIMEOUT;
+	printf("return (%d) || (%d);\n", retn == WAIT_TIMEOUT, reinterpret_cast<uintptr_t>(handle) == 7);
+	return retn == WAIT_TIMEOUT || reinterpret_cast<uintptr_t>(handle) == 7;
 }

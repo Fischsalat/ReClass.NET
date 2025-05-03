@@ -2,7 +2,7 @@
 
 #include "ReclassTypes.hpp"
 
-constexpr auto MaxNumSectionsInBuffer = 0x20;
+constexpr auto MaxNumSectionsInBuffer = 0x180;
 constexpr auto MaxNumModulesInBuffer = 0x20;
 
 constexpr auto MaxNumBytesToRead = 0x10000;
@@ -20,6 +20,7 @@ enum class ECommandType
 
 	ReadRemoteMemory,
 	WriteRemoteMemory,
+	GetCurrentProcessInfo,
 };
 
 struct ParamHeader
@@ -68,5 +69,10 @@ struct WriteRemoteMemory_Params : public ParamHeader
 
 	RC_Pointer InVirtualAddress;
 	RC_Size InNumBytesToWrite;
-	uint8_t InBuffer[0x1];
+	uint8_t InBuffer[0x1]; 
+};
+
+struct GetCurrentProcessInfo_Params : public ParamHeader
+{
+	EnumerateProcessData OutCurrentProcessData;
 };

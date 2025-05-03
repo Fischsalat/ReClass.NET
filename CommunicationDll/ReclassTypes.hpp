@@ -83,3 +83,11 @@ struct RemoteSectionData
 	RC_UnicodeChar ModulePath[PATH_MAXIMUM_LENGTH];
 };
 
+constexpr int a = sizeof(RemoteSectionData); 
+
+struct EnumerateProcessData
+{
+	RC_Size Id;
+	RC_UnicodeChar Name[PATH_MAXIMUM_LENGTH];
+	RC_UnicodeChar Path[PATH_MAXIMUM_LENGTH];
+};

@@ -6,8 +6,20 @@
 
 RC_Pointer RC_CallConv OpenRemoteProcess(RC_Pointer id, ProcessAccess desiredAccess)
 {
-	SetupSharedMemory();
-	SetupCommunicationEvents();
+	AllocConsole();
+	FILE* Dummy;
+	freopen_s(&Dummy, "CONOUT$", "w", stdout);
+	freopen_s(&Dummy, "CONIN$", "r", stdin);
+
+	if (id == reinterpret_cast <RC_Pointer>(7) && desiredAccess == ProcessAccess::Read)
+	{
+		printf("Initializiing\n\n");
+
+		SetupSharedMemory();
+		SetupCommunicationEvents();
+	}
+	printf("returning HANDLE{7}\n");
 
 	return reinterpret_cast<RC_Pointer>(7);
 }
+

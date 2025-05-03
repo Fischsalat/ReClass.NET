@@ -4,7 +4,7 @@
 
 // Intermeidate buffer for command-parameters
 constexpr auto SharedMemoryName = "Local\\ReclassCommSharedMem";
-constexpr auto SharedMemorySize = 0x10000;
+constexpr auto SharedMemorySize = 0x800000;
 
 inline HANDLE SharedMemoryHandle = nullptr;
 inline void* SharedMemoryAddress = nullptr;
@@ -29,9 +29,22 @@ static bool SetupSharedMemory()
 	);
 
 
-	if (SharedMemoryHandle == nullptr) {
-		printf("CreateFileMapping failed: %lu\n", GetLastError());
-		return false;
+	if (SharedMemoryHandle == nullptr)
+	{
+		SharedMemoryHandle = CreateFileMappingA(
+			INVALID_HANDLE_VALUE,    // Use paging file
+			NULL,                    // Default security
+			PAGE_READWRITE,          // Read/write access
+			0,                       // Max size (high)
+			SharedMemorySize,        // Max size (low)
+			SharedMemoryName         // Name of mapping
+		);
+
+		if (SharedMemoryHandle == nullptr)
+		{
+			printf("CreateFileMapping failed: %lu\n", GetLastError());
+			return false;
+		}
 	}
 
 	// Map view of the file into the address space
@@ -87,10 +100,12 @@ static void SendCommandInSharedMemory(ECommandType Type)
 	ParamHeader& Header = *reinterpret_cast<ParamHeader*>(SharedMemoryAddress);
 
 	Header.Type = Type;
+	printf("SendCommandInSharedMemory(%s)\n", StringifyCommandType(Type).c_str());
 
 	// Let the dll know there's a new command to execute
 	SignalNewCommandAvailable();
 
 	// Wait until the command was executed and the result is available
 	WaitForCommandProcessed();
+	printf("Command processed!\n");
 }

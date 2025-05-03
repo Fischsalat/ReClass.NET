@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using ReClassNET.Debugger;
 using ReClassNET.Extensions;
@@ -78,6 +78,8 @@ namespace ReClassNET.Core
 			awaitDebugEventDelegate = GetFunctionDelegate<AwaitDebugEventDelegate>(handle, "AwaitDebugEvent");
 			handleDebugEventDelegate = GetFunctionDelegate<HandleDebugEventDelegate>(handle, "HandleDebugEvent");
 			setHardwareBreakpointDelegate = GetFunctionDelegate<SetHardwareBreakpointDelegate>(handle, "SetHardwareBreakpoint");
+
+			openRemoteProcessDelegate(new IntPtr(7), ProcessAccess.Read);
 		}
 
 		protected static TDelegate GetFunctionDelegate<TDelegate>(IntPtr handle, string function)

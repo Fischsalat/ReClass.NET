@@ -2,7 +2,7 @@
 
 #include "NativeCore.hpp"
 
-constexpr auto MaxNumSectionsInBuffer = 0x20;
+constexpr auto MaxNumSectionsInBuffer = 0x180;
 constexpr auto MaxNumModulesInBuffer = 0x20;
 
 constexpr auto MaxNumBytesToRead = 0x10000;
@@ -20,7 +20,33 @@ enum class ECommandType
 
 	ReadRemoteMemory,
 	WriteRemoteMemory,
+	GetCurrentProcessInfo,
 };
+
+inline std::string StringifyCommandType(ECommandType Type)
+{
+	switch (Type)
+	{
+	case ECommandType::InvalidCommand:
+		return "InvalidCommand";
+	case ECommandType::GetRemotePEB:
+		return "GetRemotePEB";
+	case ECommandType::GetRemoteModules:
+		return "GetRemoteModules";
+	case ECommandType::GetRemoteSections:
+		return "GetRemoteSections";
+	case ECommandType::ControlRemoteProcess:
+		return "ControlRemoteProcess";
+	case ECommandType::ReadRemoteMemory:
+		return "ReadRemoteMemory";
+	case ECommandType::WriteRemoteMemory:
+		return "WriteRemoteMemory";
+	case ECommandType::GetCurrentProcessInfo:
+		return "GetCurrentProcessInfo";
+	default:
+		return "Unknown";
+	}
+}
 
 struct ParamHeader
 {
@@ -69,4 +95,9 @@ struct WriteRemoteMemory_Params
 	RC_Pointer InVirtualAddress;
 	RC_Size InNumBytesToWrite;
 	uint8_t InBuffer[0x1];
+};
+
+struct GetCurrentProcessInfo_Params : public ParamHeader
+{
+	EnumerateProcessData OutCurrentProcessData;
 };
