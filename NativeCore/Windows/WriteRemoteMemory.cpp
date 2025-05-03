@@ -16,7 +16,6 @@ bool RC_CallConv WriteRemoteMemory(RC_Pointer handle, RC_Pointer address, RC_Poi
 	Params->InVirtualAddress = address;
 	memcpy(Params->InBuffer, buffer, std::min(Params->OutNumBytesWritten, RC_Size(size)));
 
-	printf("Params->OutNumBytesRead: 0x%llX / 0x%X\n", Params->OutNumBytesWritten, size);
 	SendCommandInSharedMemory(ECommandType::WriteRemoteMemory);
 
 	return Params->OutNumBytesWritten == size;

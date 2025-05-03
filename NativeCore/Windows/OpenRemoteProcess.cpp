@@ -18,7 +18,6 @@ RC_Pointer RC_CallConv OpenRemoteProcess(RC_Pointer id, ProcessAccess desiredAcc
 		SetupSharedMemory();
 		SetupCommunicationEvents();
 	}
-	printf("returning HANDLE{7}\n");
 
 	return reinterpret_cast<RC_Pointer>(7);
 }

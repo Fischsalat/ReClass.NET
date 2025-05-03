@@ -15,9 +15,6 @@ PPEB GetRemotePeb(const HANDLE process)
 
 	SendCommandInSharedMemory(ECommandType::GetRemotePEB);
 
-	printf("Params: %p\n", Params);
-	printf("Received PEB: %p\n", Params->OutPEB);
-
 	return reinterpret_cast<PPEB>(Params->OutPEB);
 }
 
@@ -52,8 +49,6 @@ void RC_CallConv EnumerateRemoteSectionsAndModules(RC_Pointer process, Enumerate
 	GetRemoteSections_Params* Params = static_cast<GetRemoteSections_Params*>(GetSharedMemoryParamSpace());
 	
 	SendCommandInSharedMemory(ECommandType::GetRemoteSections);
-
-	printf("NumSections: 0x%llX\n", Params->OutNumSections);
 
 	std::vector<EnumerateRemoteSectionData> sections(Params->OutSectionInfoBuffer, Params->OutSectionInfoBuffer + Params->OutNumSections);
 

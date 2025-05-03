@@ -99,9 +99,8 @@ static void SendCommandInSharedMemory(ECommandType Type)
 
 	Header.Type = Type;
 	if (Type == ECommandType::GetRemoteSections)
-		printf("==========================================================\n");
-	printf("SendCommandInSharedMemory(%s)\n", StringifyCommandType(Type).c_str());
 
+	printf("SendCommandInSharedMemory(%s)\n", StringifyCommandType(Type).c_str());
 
 	// Let the dll know there's a new command to execute
 	SignalNewCommandAvailable();

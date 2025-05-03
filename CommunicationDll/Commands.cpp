@@ -105,28 +105,14 @@ void ControlRemoteProcess(ControlRemoteProcess_Params* Params)
 
 void ReadRemoteMemory(ReadRemoteMemory_Params* Params)
 {
-	printf("&Params: %p\n", Params);
-	printf("&Params->InVirtualAddress: %p\n", &Params->InVirtualAddress);
 	Params->OutNumBytesRead = 0;
-
-	printf("VirtualAddress: %p, Size: 0x%llX\n", Params->InVirtualAddress, Params->InNumBytesToRead);
 
 	if (Params->InNumBytesToRead > MaxNumBytesToRead)
 		return;
 
-	printf("Params->InNumBytesToRead > MaxNumBytesToRead\n");
-
-
 	// Validate that the being and end addresses are in the process range
 	if (IsBadReadPtr(Params->InVirtualAddress) || IsBadReadPtr(reinterpret_cast<uintptr_t>(Params->InVirtualAddress) + Params->InNumBytesToRead))
-	{
-
-		printf("StartValid: (%d)\n", IsBadReadPtr(Params->InVirtualAddress));
-		printf("EndValid: (%d)\n", IsBadReadPtr(reinterpret_cast<uintptr_t>(Params->InVirtualAddress) + Params->InNumBytesToRead));
-
-
 		return;
-	}
 
 	memcpy(Params->OutBuffer, Params->InVirtualAddress, Params->InNumBytesToRead);
 	Params->OutNumBytesRead = Params->InNumBytesToRead;
