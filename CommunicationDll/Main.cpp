@@ -14,7 +14,10 @@ void UninjectIfWanted(HMODULE Module, FILE* Dummy)
 		Sleep(200);
 
 		fclose(stdout);
-		fclose(Dummy);
+
+		if (Dummy)
+			fclose(Dummy);
+
 		FreeConsole();
 
 		FreeLibraryAndExitThread(Module, 0);
@@ -81,9 +84,9 @@ DWORD MainThread(HMODULE Module)
 {
 	/* Code to open a console window */
 	AllocConsole();
-	FILE* Dummy;
-	freopen_s(&Dummy, "CONOUT$", "w", stdout);
-	freopen_s(&Dummy, "CONIN$", "r", stdin);
+	FILE* Dummy = nullptr;
+	//freopen_s(&Dummy, "CONOUT$", "w", stdout);
+	//freopen_s(&Dummy, "CONIN$", "r", stdin);
 
 	// Your code here
 	if (!SetupSharedMemory())
